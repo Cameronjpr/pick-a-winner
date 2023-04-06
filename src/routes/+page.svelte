@@ -17,7 +17,7 @@
 	const fixutesForWeek = getThisWeeksGames(fixtures);
 </script>
 
-<h1>Pick your teams</h1>
+<h1>This week’s games</h1>
 
 {#if fixutesForWeek}
 	<form use:enhance>
@@ -55,6 +55,7 @@
 	}
 
 	.team-selection {
+		padding: 0;
 		padding-top: 0.5rem;
 		display: grid;
 		grid-template-columns: 1fr 1fr;
@@ -77,7 +78,7 @@
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
-		padding: 2rem;
+		padding: 1rem;
 		background: var(--color-base);
 		border: 2px solid var(--color-text);
 		border-radius: 4px;
@@ -89,7 +90,7 @@
 	}
 
 	.team-selection label:has(input:checked) {
-		background: var(--color-primary);
+		background: var(--color-secondary);
 		color: var(--color-base);
 	}
 
