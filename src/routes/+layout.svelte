@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import '../app.css';
+	import type { LayoutServerData } from './$types';
+	export let data: LayoutServerData;
+
+	console.log(data?.players);
 </script>
 
 <nav>
@@ -9,6 +13,7 @@
 		<a href="/play">play</a>
 		<a href="/about">about</a>
 	</ul>
+	<span>{data?.remainingTokens} tokens remaining</span>
 </nav>
 <main>
 	<slot />
@@ -22,17 +27,22 @@
 <style>
 	nav {
 		background-color: var(--color-base);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-direction: row;
+		max-width: 800px;
+		padding: 1rem;
+		margin: 0 auto;
 	}
 
 	nav ul {
-		display: flex;
 		justify-content: left;
 		align-items: start;
 		gap: 1rem;
-		padding: 1rem;
+		padding: 0;
+		margin: 0;
 		list-style: none;
-		max-width: 800px;
-		margin: 0 auto;
 	}
 
 	nav a {
