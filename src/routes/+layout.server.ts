@@ -1,5 +1,6 @@
 // import type { LayoutServerLoad } from './$types';
 
+import type { Actions } from '@sveltejs/kit';
 import type { RawFixture } from '../lib/types';
 
 export async function load({ fetch }) {

@@ -1,11 +1,13 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import '../app.css';
 </script>
 
 <nav>
 	<ul>
-		<a href="/">Home</a>
-		<a href="/about">About</a>
+		<a href="/">home</a>
+		<a href="/play">play</a>
+		<a href="/about">about</a>
 	</ul>
 </nav>
 <main>
@@ -24,8 +26,9 @@
 
 	nav ul {
 		display: flex;
-		justify-content: space-between;
-		align-items: center;
+		justify-content: left;
+		align-items: start;
+		gap: 1rem;
 		padding: 1rem;
 		list-style: none;
 		max-width: 800px;
