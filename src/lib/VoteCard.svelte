@@ -13,10 +13,12 @@
 	let cardActive = false;
 	let originX = 0;
 	let originY = 0;
+	let deltaX = 0;
 	let vote: number | null = null;
 	let probableVote: number | null = null;
 
 	function handleVote() {
+		console.log('handle vote', vote);
 		if (vote !== null) {
 			console.log('voted for', vote);
 
@@ -33,10 +35,8 @@
 		originY = e.clientY;
 	}
 
-	function handleDeactivate(e: MouseEvent) {
+	function handleDeactivate() {
 		cardActive = false;
-
-		const deltaX = e.clientX - originX;
 
 		if (deltaX < -100) {
 			vote = fixture.team_h;
@@ -52,33 +52,13 @@
 			card.style.transform = 'translate(0px)';
 			handleVote();
 		}
-	}
 
-	function handleTouchDeactivate(e: TouchEvent) {
-		cardActive = false;
-
-		const deltaX = e.touches[0].clientX - originX;
-
-		if (deltaX < -100) {
-			vote = fixture.team_h;
-		} else if (deltaX > 100) {
-			vote = fixture.team_a;
-		} else {
-			console.log('no vote');
-		}
-
-		const card = document.querySelector('article');
-
-		if (card) {
-			card.style.transform = 'translate(0px)';
-			handleVote();
-		}
+		deltaX = 0;
 	}
 
 	function handleMoveCard(e: MouseEvent) {
 		if (cardActive) {
-			const deltaX = e.clientX - originX;
-			const deltaY = e.clientY - originY;
+			deltaX = e.clientX - originX;
 			const card = document.querySelector('article');
 
 			if (deltaX < 0) {
@@ -97,8 +77,7 @@
 
 	function handleTouchMoveCard(e: TouchEvent) {
 		if (cardActive) {
-			const deltaX = e.touches[0].clientX - originX;
-			const deltaY = e.touches[0].clientY - originY;
+			deltaX = e.touches[0].clientX - originX;
 			const card = document.querySelector('article');
 
 			if (deltaX < 0) {
@@ -125,10 +104,11 @@
 <article
 	on:touchstart={handleTouchActivate}
 	on:touchmove={handleTouchMoveCard}
-	on:touchend={handleTouchDeactivate}
+	on:touchend={handleDeactivate}
 	on:mousedown={handleActivate}
 	on:mouseup={handleDeactivate}
 	on:mousemove={handleMoveCard}
+	style="transform: rotate({deltaX / 50}deg);"
 >
 	<time>12:30pm</time>
 	<section>
