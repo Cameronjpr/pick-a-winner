@@ -12,9 +12,10 @@ export function getUpperTimeBound() {
 }
 
 export function getThisWeeksGames(fixtures: Array<RawFixture>) {
-	console.log(getLowerTimeBound());
-	console.log(getUpperTimeBound());
-	return fixtures.filter((fixture: RawFixture) => {
+	console.log('getThisWeeksGames', fixtures);
+	if (!fixtures.length) return [];
+
+	return fixtures?.filter((fixture: RawFixture) => {
 		return (
 			dayjs(fixture.kickoff_time).isAfter(getLowerTimeBound()) &&
 			dayjs(fixture.kickoff_time).isBefore(getUpperTimeBound())

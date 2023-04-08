@@ -11,6 +11,14 @@ export async function load({ fetch }) {
 		}
 	});
 
+	let fixtures;
+
+	if (!res.ok) {
+		fixtures = [];
+	} else {
+		fixtures = await res.json();
+	}
+
 	const pb = new PocketBase(PUBLIC_POCKETBASE_URL);
 
 	// you can also fetch all records at once via getFullList
@@ -18,11 +26,9 @@ export async function load({ fetch }) {
 		sort: '-created'
 	});
 
-	console.log(records);
-
 	return {
 		remainingTokens: 5,
 		players: JSON.stringify(records),
-		fixtures: (await res.json()) as Array<RawFixture>
+		fixtures: fixtures as Array<RawFixture>
 	};
 }

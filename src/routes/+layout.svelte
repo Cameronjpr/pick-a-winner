@@ -1,10 +1,7 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import '../app.css';
 	import type { LayoutServerData } from './$types';
 	export let data: LayoutServerData;
-
-	console.log(data?.players);
 </script>
 
 <nav>
