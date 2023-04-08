@@ -1,13 +1,31 @@
 <script lang="ts">
+	import { teams } from './teams';
 	import type { RawFixture } from './types';
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	export let fixture: RawFixture;
+
+	$: homeTeam = teams[fixture.team_h - 1].shortName;
+	$: awayTeam = teams[fixture.team_a - 1].shortName;
 
 	let cardActive = false;
 	let originX = 0;
 	let originY = 0;
 	let vote: number | null = null;
 	let probableVote: number | null = null;
+
+	function handleVote() {
+		if (vote !== null) {
+			console.log('voted for', vote);
+
+			dispatch('vote', {
+				picked: vote,
+				fixture: fixture.id
+			});
+		}
+	}
 
 	function handleActivate(e: MouseEvent) {
 		cardActive = true;
@@ -18,11 +36,7 @@
 	function handleDeactivate(e: MouseEvent) {
 		cardActive = false;
 
-		console.log(e.clientX);
-
 		const deltaX = e.clientX - originX;
-
-		console.log(deltaX);
 
 		if (deltaX < -100) {
 			vote = fixture.team_h;
@@ -36,17 +50,14 @@
 
 		if (card) {
 			card.style.transform = 'translate(0px)';
+			handleVote();
 		}
 	}
 
 	function handleTouchDeactivate(e: TouchEvent) {
 		cardActive = false;
 
-		console.log(e.touches[0].clientX);
-
 		const deltaX = e.touches[0].clientX - originX;
-
-		console.log(deltaX);
 
 		if (deltaX < -100) {
 			vote = fixture.team_h;
@@ -60,6 +71,7 @@
 
 		if (card) {
 			card.style.transform = 'translate(0px)';
+			handleVote();
 		}
 	}
 
@@ -121,21 +133,26 @@
 	<time>12:30pm</time>
 	<section>
 		<div class="team-info">
-			<h2>Leeds</h2>
+			<h2>{homeTeam}</h2>
 		</div>
 		<div class="team-info">
-			<h2>Crystal Palace</h2>
+			<h2>{awayTeam}</h2>
 		</div>
 	</section>
-	<div class="vote-summary">
+	<div
+		class="vote-summary"
+		style="border: 2px solid {probableVote
+			? teams[probableVote - 1].primaryColor
+			: 'var(--color-base)'}"
+	>
 		{#if vote === fixture.team_h}
-			<span>Voted Leeds</span>
+			<span>Voted {homeTeam}</span>
 		{:else if vote === fixture.team_a}
-			<span>Voted Crystal Palace</span>
+			<span>Voted {awayTeam}</span>
 		{:else if probableVote === fixture.team_h}
-			<span>Voting Leeds...</span>
+			<span>Voting {homeTeam}...</span>
 		{:else if probableVote === fixture.team_a}
-			<span>Voting Crystal Palace...</span>
+			<span>Voting {awayTeam}...</span>
 		{:else}
 			<span>Swipe to vote!</span>
 		{/if}
@@ -145,7 +162,7 @@
 <style>
 	article {
 		display: grid;
-		grid-template-rows: 1fr 1fr 1fr;
+		grid-template-rows: auto 1fr auto;
 		grid-gap: 1rem;
 		padding: 1rem;
 		margin-bottom: 1rem;
@@ -179,7 +196,6 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		background-color: antiquewhite;
 	}
 
 	.vote-summary {
@@ -187,7 +203,9 @@
 		justify-content: center;
 		align-items: center;
 		height: 3rem;
-		background-color: antiquewhite;
+		border-radius: 1rem;
+		background-color: var(--color-base);
+		border: 2px solid var(--color-base);
 	}
 
 	section h2 {

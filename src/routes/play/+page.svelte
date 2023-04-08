@@ -19,6 +19,7 @@
 	const { fixtures, tokens } = data;
 
 	const fixturesForWeek = getThisWeeksGames(fixtures);
+	let fixtureIndex = 0;
 
 	type Vote = {
 		fixture: number;
@@ -30,28 +31,24 @@
 	onMount(async function () {
 		votes = await pb.collection('votes').getFullList();
 	});
+
+	function handleVote(e) {
+		console.log('vote', e.detail);
+		fixtureIndex = fixtureIndex + 1;
+		console.log(fixtureIndex);
+	}
 </script>
 
 <h1>this week’s games</h1>
 
 {#if fixturesForWeek?.length}
-	{#each fixturesForWeek as f, i}
-		<VoteCard fixture={f} />
-		<!-- {@const fixtureVotes = votes.find((v) => v.fixture == f.code)}
-
-		{#if i === 0 || dayjs(f.kickoff_time).day() !== dayjs(fixturesForWeek[i - 1].kickoff_time).day()}
-			<h2>{dayjs(f.kickoff_time).format('dddd Do MMMM')}</h2>
-		{/if}
-		<article>
-			<VoteButton team={f.team_h} fixture={f.code} {fixtureVotes} />
-			<time>{dayjs(f.kickoff_time).format('h:mma')}</time>
-			<VoteButton team={f.team_a} fixture={f.code} {fixtureVotes} />
-		</article> -->
-	{/each}
-	<button on:click={() => console.log(votes)}>Save</button>
+	{#if fixtureIndex < fixturesForWeek.length}
+		<VoteCard on:vote={handleVote} fixture={fixturesForWeek[fixtureIndex]} />
+	{:else}
+		<h2>That’s all the games for this week.</h2>
+	{/if}
 {:else}
 	<h2>No games found.</h2>
-	<!-- <VoteCard fixture={f} /> -->
 {/if}
 
 <style>
