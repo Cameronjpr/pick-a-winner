@@ -1,16 +1,18 @@
 <script lang="ts">
 	import '../app.css';
-	import type { LayoutServerData } from './$types';
-	export let data: LayoutServerData;
+
+	import type { LayoutData } from './$types';
+
+	export let data: LayoutData;
 </script>
 
 <nav>
 	<ul>
 		<a href="/">home</a>
 		<a href="/play">play</a>
-		<a href="/about">about</a>
+		<a href="/sign-in">sign in</a>
+		<a href="/admin">admin</a>
 	</ul>
-	<span>{data?.remainingTokens} tokens remaining</span>
 </nav>
 <main>
 	<slot />
@@ -34,12 +36,14 @@
 	}
 
 	nav ul {
+		display: flex;
 		justify-content: left;
 		align-items: start;
 		gap: 1rem;
 		padding: 0;
 		margin: 0;
 		list-style: none;
+		border-bottom: 2px solid var(--color-text);
 	}
 
 	nav a {

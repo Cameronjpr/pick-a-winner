@@ -12,8 +12,7 @@ export function getUpperTimeBound() {
 }
 
 export function getThisWeeksGames(fixtures: Array<RawFixture>) {
-	console.log('getThisWeeksGames', fixtures);
-	if (!fixtures.length) return [];
+	if (!fixtures?.length) return [];
 
 	return fixtures?.filter((fixture: RawFixture) => {
 		return (

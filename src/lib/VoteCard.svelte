@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { teams } from './teams';
-	import type { RawFixture } from './types';
+	import type { RawFixture, SlimFixture } from './types';
 	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
-	export let fixture: RawFixture;
+	export let fixture: SlimFixture;
 
-	$: homeTeam = teams[fixture.team_h - 1].shortName;
-	$: awayTeam = teams[fixture.team_a - 1].shortName;
+	const { home, away } = fixture;
 
 	let cardActive = false;
 	let originX = 0;
@@ -39,9 +38,9 @@
 		cardActive = false;
 
 		if (deltaX < -100) {
-			vote = fixture.team_h;
+			vote = fixture.home;
 		} else if (deltaX > 100) {
-			vote = fixture.team_a;
+			vote = fixture.away;
 		} else {
 			console.log('no vote');
 		}
@@ -62,15 +61,15 @@
 			const card = document.querySelector('article');
 
 			if (deltaX < 0) {
-				probableVote = fixture.team_h;
+				probableVote = fixture.home;
 			} else if (deltaX > 0) {
-				probableVote = fixture.team_a;
+				probableVote = fixture.away;
 			} else {
 				probableVote = null;
 			}
 
 			if (card) {
-				card.style.transform = `translate(${deltaX}px)`;
+				card.style.transform = `rotate(${deltaX / 50}deg) translateX(${deltaX}px`;
 			}
 		}
 	}
@@ -81,15 +80,15 @@
 			const card = document.querySelector('article');
 
 			if (deltaX < 0) {
-				probableVote = fixture.team_h;
+				probableVote = fixture.home;
 			} else if (deltaX > 0) {
-				probableVote = fixture.team_a;
+				probableVote = fixture.away;
 			} else {
 				probableVote = null;
 			}
 
 			if (card) {
-				card.style.transform = `translate(${deltaX}px)`;
+				card.style.transform = `rotate(${deltaX / 50}deg) translateX(${deltaX}px`;
 			}
 		}
 	}
@@ -108,50 +107,53 @@
 	on:mousedown={handleActivate}
 	on:mouseup={handleDeactivate}
 	on:mousemove={handleMoveCard}
-	style="transform: rotate({deltaX / 50}deg);"
+	style="border: 2px solid {probableVote
+		? teams[probableVote - 1].primaryColor
+		: 'var(--color-base)'}"
 >
 	<time>12:30pm</time>
 	<section>
 		<div class="team-info">
-			<h2>{homeTeam}</h2>
+			<h2>
+				{teams[home-1].shortName}
+			</h2>
 		</div>
 		<div class="team-info">
-			<h2>{awayTeam}</h2>
+			<h2>{teams[away-1].shortName}</h2>
 		</div>
 	</section>
-	<div
-		class="vote-summary"
-		style="border: 2px solid {probableVote
-			? teams[probableVote - 1].primaryColor
-			: 'var(--color-base)'}"
-	>
-		{#if vote === fixture.team_h}
+	<!-- <div class="vote-summary">
+		{#if vote === fixture.home}
 			<span>Voted {homeTeam}</span>
-		{:else if vote === fixture.team_a}
+		{:else if vote === fixture.away}
 			<span>Voted {awayTeam}</span>
-		{:else if probableVote === fixture.team_h}
+		{:else if probableVote === fixture.home}
 			<span>Voting {homeTeam}...</span>
-		{:else if probableVote === fixture.team_a}
+		{:else if probableVote === fixture.away}
 			<span>Voting {awayTeam}...</span>
 		{:else}
 			<span>Swipe to vote!</span>
 		{/if}
-	</div>
+	</div> -->
 </article>
 
 <style>
 	article {
+		background-color: white;
 		display: grid;
 		grid-template-rows: auto 1fr auto;
 		grid-gap: 1rem;
 		padding: 1rem;
 		margin-bottom: 1rem;
-		border: 1px solid black;
+		border: 2px solid black;
 		border-radius: 1rem;
 		box-shadow: 0 0.5rem 0.75rem 0.1rem rgba(0, 0, 0, 0.2);
-		min-height: 300px;
+		min-width: 300px;
 		max-width: 500px;
+		aspect-ratio: 3 / 4;
 		cursor: pointer;
+		transform-origin: bottom center;
+		user-select: none;
 	}
 
 	article:last-child {

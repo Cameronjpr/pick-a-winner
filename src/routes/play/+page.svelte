@@ -1,81 +1,49 @@
 <script lang="ts">
 	import { getThisWeeksGames } from '@lib/utils';
-	import type { LayoutData } from './$types';
-	import dayjs from 'dayjs';
-	import PocketBase from 'pocketbase';
-	import advancedFormat from 'dayjs/plugin/advancedFormat';
-	import { onMount } from 'svelte';
-	import VoteButton from '@lib/VoteButton.svelte';
-	import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
-	import VoteCard from '@lib/VoteCard.svelte';
-	const pb = new PocketBase(PUBLIC_POCKETBASE_URL);
 
-	dayjs.locale('en-gb');
-	dayjs.extend(advancedFormat);
-	dayjs().format();
+	import VoteCard from '@lib/VoteCard.svelte';
+	import type { LayoutData } from '../$types';
 
 	export let data: LayoutData;
 
-	const { fixtures, tokens } = data;
+	const { fixtures } = data;
 
-	const fixturesForWeek = getThisWeeksGames(fixtures);
+
 	let fixtureIndex = 0;
+	let fixture = fixtures[fixtureIndex];
 
-	type Vote = {
-		fixture: number;
-		picked: number;
-		count: number;
-	};
-	let votes: Array<Vote> = [];
-
-	onMount(async function () {
-		votes = await pb.collection('votes').getFullList();
-	});
-
-	function handleVote(e) {
-		console.log('vote', e.detail);
+	async function handleVote(e: CustomEvent<{ fixture: number; picked: number }>) {
 		fixtureIndex = fixtureIndex + 1;
-		console.log(fixtureIndex);
+		console.log('fixtureIndex', fixtureIndex)
+		const { fixture, picked } = e.detail;
 	}
+
 </script>
 
-<h1>this week’s games</h1>
 
-{#if fixturesForWeek?.length}
-	{#if fixtureIndex < fixturesForWeek.length}
-		<VoteCard on:vote={handleVote} fixture={fixturesForWeek[fixtureIndex]} />
-	{:else}
-		<h2>That’s all the games for this week.</h2>
-	{/if}
+{#if fixtures?.length}
+	<h1>swipe to play</h1>
+	<section>
+		{#if fixtureIndex < fixtures.length}
+			{#key fixtureIndex}
+				<VoteCard on:vote={handleVote} fixture={fixtures[fixtureIndex]} />
+			{/key}
+		{:else}
+			<h2>That’s all the games for this week.</h2>
+		{/if}
+	</section>
 {:else}
 	<h2>No games found.</h2>
 {/if}
 
 <style>
-	article {
-		padding-block: 1rem;
-		margin-bottom: 1rem;
-	}
-
-	article:last-child {
-		margin-bottom: 0;
-	}
-
-	article {
-		padding: 0;
-		padding-top: 0.5rem;
-		display: grid;
-		grid-template-columns: 1fr auto 1fr;
-		align-items: center;
-		grid-gap: 1rem;
-		border: none;
-	}
-
-	time {
-		display: inline;
-	}
-
 	h2 {
 		font-size: 1.25rem;
+	}
+
+	section {
+		display: flex;
+		justify-content: center;
+		height: 400px;
 	}
 </style>
