@@ -41,7 +41,9 @@ body {
     hsl(var(--gradient-step-9) 100% 50% / 80%),
     hsl(var(--gradient-step-2) 100% 50% / 0%)
     var(--gradient-length)
-  )
+  );
+
+  background-repeat: no-repeat;
 
  /*
   height: 100svh;
